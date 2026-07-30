@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/nicholaswilkins/Library/Application Support/Herd/bin/php84",
+            "args": [
+                "/Users/nicholaswilkins/sites/french_numberplate/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

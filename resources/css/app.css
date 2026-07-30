@@ -1,0 +1,254 @@
+@import 'tailwindcss';
+
+@source '../views';
+@source '../js';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-tricolore-blue: oklch(31.9% 0.174 265.6);
+    --color-tricolore-red: oklch(55.5% 0.213 22.9);
+
+    --color-car-blue: oklch(54.6% 0.215 262.9);
+    --color-car-red: oklch(57.7% 0.245 27.3);
+}
+
+/* Set by the client so sticky decade labels sit directly under the header. */
+:root {
+    --header-height: 9rem;
+}
+
+.plate-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: --spacing(2);
+}
+
+@media (width >= 30rem) {
+    .plate-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: --spacing(2.5);
+    }
+}
+
+@media (width >= 40rem) {
+    .plate-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: --spacing(3);
+    }
+}
+
+@media (width >= 48rem) {
+    .plate-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+}
+
+@media (width >= 64rem) {
+    .plate-grid {
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+}
+
+@media (width >= 80rem) {
+    .plate-grid {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+}
+
+/*
+  Each decade is a flow-through wrapper so all the plates share one grid — the
+  label spans a full row and gives a sticky "you are in the 80s" marker without
+  breaking the tiles into separate grids.
+*/
+.plate-decade {
+    display: contents;
+}
+
+.plate-decade[hidden] {
+    display: none;
+}
+
+.decade-label {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 20;
+    grid-column: 1 / -1;
+}
+
+/* Fast, deliberate taps: no double-tap zoom, no selection, no 300ms delay. */
+.plate {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/*
+  Paint sits beneath the number so the code stays readable however many
+  splodges land on it, and a white halo lifts it clear of the colour. Each
+  splodge is only ~64% of the plate and lands in a fixed slot per car, so one
+  car's paint never hides the other's — you can always see that both cars
+  found a plate.
+*/
+.plate-splats {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.plate-stripe {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    z-index: 1;
+    width: --spacing(1.5);
+}
+
+.plate-number {
+    position: relative;
+    z-index: 2;
+}
+
+.plate[data-any] .plate-number {
+    text-shadow:
+        0 0 2px #fff,
+        0 0 5px #fff,
+        0 0 9px rgb(255 255 255 / 0.95);
+}
+
+.plate-name {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2;
+}
+
+.plate-both {
+    position: absolute;
+    top: --spacing(1);
+    right: --spacing(1);
+    z-index: 3;
+    display: flex;
+    height: --spacing(2.5);
+    width: --spacing(5);
+    overflow: hidden;
+    border-radius: 9999px;
+    outline: 2px solid #fff;
+}
+
+.splat {
+    position: absolute;
+    left: var(--splat-x);
+    top: var(--splat-y);
+    width: 64%;
+    height: 64%;
+    translate: -50% -50%;
+    rotate: var(--splat-rotate);
+    scale: var(--splat-scale);
+    opacity: 0.92;
+}
+
+.splat > svg {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.splat--enter {
+    animation: splat-in 340ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
+@keyframes splat-in {
+    from {
+        scale: calc(var(--splat-scale) * 0.2);
+        opacity: 0;
+    }
+    55% {
+        scale: calc(var(--splat-scale) * 1.18);
+        opacity: 0.92;
+    }
+    to {
+        scale: var(--splat-scale);
+        opacity: 0.92;
+    }
+}
+
+.plate--pop {
+    animation: plate-pop 260ms ease-out;
+}
+
+@keyframes plate-pop {
+    0% {
+        scale: 1;
+    }
+    45% {
+        scale: 0.93;
+    }
+    100% {
+        scale: 1;
+    }
+}
+
+.plate--flash {
+    outline: 4px solid transparent;
+    outline-offset: 2px;
+    animation: plate-flash 1s ease-out;
+}
+
+@keyframes plate-flash {
+    0%,
+    100% {
+        outline-color: transparent;
+    }
+    25%,
+    75% {
+        outline-color: var(--color-amber-400);
+    }
+}
+
+.cheer {
+    animation: cheer-in 420ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
+@keyframes cheer-in {
+    from {
+        scale: 0.6;
+        opacity: 0;
+    }
+    to {
+        scale: 1;
+        opacity: 1;
+    }
+}
+
+.toast {
+    animation: toast-in 220ms ease-out both;
+}
+
+@keyframes toast-in {
+    from {
+        translate: 0 0.75rem;
+        opacity: 0;
+    }
+    to {
+        translate: 0 0;
+        opacity: 1;
+    }
+}
+
+/* Filters hide plates by state. Attributes are set on each plate by the client. */
+[data-filter='mine'] .plate:not([data-mine]),
+[data-filter='ours'] .plate:not([data-any]),
+[data-filter='todo'] .plate[data-any] {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .splat--enter,
+    .plate--pop,
+    .plate--flash,
+    .cheer,
+    .toast {
+        animation: none;
+    }
+}
